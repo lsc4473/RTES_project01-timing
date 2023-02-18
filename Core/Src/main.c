@@ -106,13 +106,13 @@ _Bool power_on_self_test( void ) {
 	int pass = 0;
 	uint8_t input;
 
-
 	n = sprintf((char *) message, "Initializing POST...\r\n");
 	USART_Write(USART2, message, n);
 
 	/* Enable and Reset Timer */
 	TIM2->CNT = 0;
 	TIM2->CR1 |= TIM_CR1_CEN;
+	n = TIM2->CCR1;
 
 	while(TIM2->CNT < 10000){
 		if(TIM2->SR & TIM_SR_CC1IF){
@@ -121,17 +121,16 @@ _Bool power_on_self_test( void ) {
 	}
 
 	if(pass == 1){
-		n = sprintf((char *) message, "\r\nPOST Successful. Press <CR> to continue: \r\n");
+		n = sprintf((char *) message, "POST Successful.\r\n");
 		USART_Write(USART2, message, n);
 	}else{
-		n = sprintf((char *) message, "\r\nPOST failed. Press <CR> to restart: \r\n");
+		n = sprintf((char *) message, "POST failed. Press <CR> to restart: \r\n");
 		USART_Write(USART2, message, n);
+		while(input != (int)'\r' && input != (int)'\n'){
+			input = USART_Read(USART2);
+		}
+		input = 0;
 	}
-
-	while(input != (int)'\r' && input != (int)'\n'){
-		input = USART_Read(USART2);
-	}
-	input = 0;
 
 	/* Disable Timer */
 	TIM2->CR1 &= ~TIM_CR1_CEN;
@@ -149,7 +148,8 @@ void init_measurement( uint32_t limit ) {
 }
 
 void make_measurements( uint32_t limit ) {
-	int period, n, input, progress;
+	int period, n, input;
+	int i = 0;
 
 	n = sprintf((char *) message, "Press <CR> to start taking measurements: ");
 	USART_Write(USART2, message, n);
@@ -166,33 +166,21 @@ void make_measurements( uint32_t limit ) {
 	TIM2->CR1 |= TIM_CR1_CEN;
 
 	/* Reset */
-	TIM2->CNT = 0;
 	period = TIM2->CCR1;
+	while(!(TIM2->SR & TIM_SR_CC1IF));		// Wait for next rising edge
+	period = TIM2->CCR1;
+	TIM2->CNT = 0;
 
-	for(int i = 0; i < 1000; i++){
-		/* Loop until interrupt flag set */
-		while(~(TIM2->SR & TIM_SR_CC1IF));
-		/* Read Period */
+	/* Take measurements */
+	while(i < 1000){
+		while(!(TIM2->SR & TIM_SR_CC1IF));
 		period = TIM2->CCR1;
-		/* Reset Timer */
 		TIM2->CNT = 0;
-
-		/* Value limiting to prevent array out of bounds. */
-		if(period > limit + 100){
-			period = limit + 100;
-		}else if(period < limit){
-			period = limit;
+		if ((period >= limit) && (period <= limit + 100)) {
+			histogram[period - limit] += 1;
+			i++;
 		}
-
-		histogram[period - limit] += 1;
-		/* Output Progress */
-		progress = (int)((float)i / 1000.0);
-		n = sprintf((char *) message, "\rProgress:\t%d%%", progress);
-		USART_Write(USART2, message, n);
 	}
-
-	n = sprintf((char *) message, "\r\n");
-	USART_Write(USART2, message, n);
 
 	/* Disable Timer */
 	TIM2->CR1 %= ~TIM_CR1_CEN;
@@ -213,6 +201,8 @@ void print_measurements( uint32_t limit ) {
 			USART_Write(USART2, message, n);
 		}
 	}
+	n = sprintf((char *) message, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n\r\n");
+	USART_Write(USART2, message, n);
 	return;
 }
 
@@ -242,7 +232,7 @@ void get_limit ( uint8_t *buffer, uint32_t *lower_limit ) {
 	int temp = atoi((char *)buffer);
 	int n;
 
-	if(temp <= 10000 || temp >= 100) {
+	if(temp <= 10000 && temp >= 100) {
 		*lower_limit = temp - 50;
 	}
 
