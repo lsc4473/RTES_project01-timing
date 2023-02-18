@@ -171,7 +171,7 @@ void make_measurements( uint32_t limit ) {
 
 	for(int i = 0; i < 1000; i++){
 		/* Loop until interrupt flag set */
-		while(~(TIM2->SR & TIM_SR_CC1IF)){
+		while(~(TIM2->SR & TIM_SR_CC1IF));
 		/* Read Period */
 		period = TIM2->CCR1;
 		/* Reset Timer */

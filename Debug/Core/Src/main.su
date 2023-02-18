@@ -1,0 +1,7 @@
+../Core/Src/main.c:42:5:main	40	static
+../Core/Src/main.c:104:7:power_on_self_test	24	static
+../Core/Src/main.c:144:6:init_measurement	24	static
+../Core/Src/main.c:151:6:make_measurements	40	static
+../Core/Src/main.c:205:6:print_measurements	24	static
+../Core/Src/main.c:220:6:get_line	32	static
+../Core/Src/main.c:241:6:get_limit	24	static

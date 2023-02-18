@@ -59,8 +59,8 @@ all: main-build
 main-build: project1_timing.elf secondary-outputs
 
 # Tool invocations
-project1_timing.elf project1_timing.map: $(OBJS) $(USER_OBJS) G:\Other\ computers\GAMETIME\F\RIT\2225_Spring2023\CMPE-663\Projects\project1\work\STM32L476RGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "project1_timing.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"G:\Other computers\GAMETIME\F\RIT\2225_Spring2023\CMPE-663\Projects\project1\work\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="project1_timing.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+project1_timing.elf project1_timing.map: $(OBJS) $(USER_OBJS) F:\RIT\2225_Spring2023\CMPE-663\Projects\project1\RTES_project01-timing\STM32L476RGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "project1_timing.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"F:\RIT\2225_Spring2023\CMPE-663\Projects\project1\RTES_project01-timing\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="project1_timing.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
