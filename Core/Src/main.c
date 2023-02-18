@@ -11,9 +11,9 @@
 uint8_t message[50];    // message to print to the user
 int histogram[101];		// histogram array
 
-//////////////////////////////////////////////////////////////
+///////////////////////////////////////
 // Function declarations
-////////////////
+///////////////////////////////////////
 
 // runs the power on self-test. Returns true if the test passes, false otherwise
 _Bool power_on_self_test( void );
@@ -121,10 +121,10 @@ _Bool power_on_self_test( void ) {
 	}
 
 	if(pass == 1){
-		n = sprintf((char *) message, "\r\nPOST Successful. Press <CR> to continue...\r\n");
+		n = sprintf((char *) message, "\r\nPOST Successful. Press <CR> to continue: \r\n");
 		USART_Write(USART2, message, n);
 	}else{
-		n = sprintf((char *) message, "\r\nPOST failed. Press <CR> to restart...\r\n");
+		n = sprintf((char *) message, "\r\nPOST failed. Press <CR> to restart: \r\n");
 		USART_Write(USART2, message, n);
 	}
 
