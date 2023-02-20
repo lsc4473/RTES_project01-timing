@@ -149,7 +149,7 @@ void init_measurement( uint32_t limit ) {
 
 void make_measurements( uint32_t limit ) {
 	int period, n, input;
-	int i, prev = 0;
+	int i = 0;
 
 	n = sprintf((char *) message, "Press <CR> to start taking measurements: ");
 	USART_Write(USART2, message, n);
@@ -174,12 +174,12 @@ void make_measurements( uint32_t limit ) {
 	/* Take measurements */
 	while(i < 1000){
 		while(!(TIM2->SR & TIM_SR_CC1IF));
-		period = TIM2->CCR1 - prev;
+		period = TIM2->CCR1;
+		TIM2->CNT = 0;
 		if ((period >= limit) && (period <= limit + 100)) {
 			histogram[period - limit] += 1;
 			i++;
 		}
-		prev = period;
 	}
 
 	/* Disable Timer */
