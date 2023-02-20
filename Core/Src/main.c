@@ -166,10 +166,10 @@ void make_measurements( uint32_t limit ) {
 	TIM2->CR1 |= TIM_CR1_CEN;
 
 	/* Reset */
-	period = TIM2->CCR1;
+	prev = TIM2->CCR1;
 	while(!(TIM2->SR & TIM_SR_CC1IF));		// Wait for next rising edge
-	period = TIM2->CCR1;
 	TIM2->CNT = 0;
+	prev = TIM2->CCR1;
 
 	/* Take measurements */
 	while(i < 1000){
