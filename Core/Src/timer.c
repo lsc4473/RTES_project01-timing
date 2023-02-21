@@ -20,8 +20,8 @@ void TIM_Init(void) {
 	TIM2->CCMR1 &= ~(TIM_CCMR1_IC1F);
 	TIM2->CCER |= TIM_CCER_CC1E;
 	/* Update on the rising edge */
-	TIM2->CCER |= TIM_CCER_CC1P;
-	TIM2->CCER |= TIM_CCER_CC1NP;
+	TIM2->CCER &= ~TIM_CCER_CC1P;
+	TIM2->CCER &= ~TIM_CCER_CC1NP;
 
 //	/* Enable Timer */
 //	TIM2->CR1 |= TIM_CR1_CEN;
